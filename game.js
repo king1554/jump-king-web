@@ -89,8 +89,10 @@ function updatePlayer() {
     player.onGround = false;
   }
 
-  // 플랫폼 충돌
-  for (const pf of stages[stage]) {
+  // 플랫폼 충돌 및 마지막 플랫폼 체크
+  let onLastPlatform = false;
+  for (let i = 0; i < stages[stage].length; i++) {
+    const pf = stages[stage][i];
     if (
       player.x + PLAYER_WIDTH > pf.x &&
       player.x < pf.x + pf.w &&
@@ -100,6 +102,7 @@ function updatePlayer() {
       player.y = pf.y - PLAYER_HEIGHT;
       player.vy = 0;
       player.onGround = true;
+      if (i === stages[stage].length - 1) onLastPlatform = true;
     }
   }
 
@@ -107,8 +110,8 @@ function updatePlayer() {
   if (player.x < 0) player.x = 0;
   if (player.x + PLAYER_WIDTH > canvas.width) player.x = canvas.width - PLAYER_WIDTH;
 
-  // 스테이지 클리어
-  if (player.y < 0 && stage < stages.length - 1) {
+  // 마지막 플랫폼 위에 있으면 다음 스테이지로
+  if (onLastPlatform && stage < stages.length - 1) {
     stage++;
     player.x = canvas.width / 2 - PLAYER_WIDTH / 2;
     player.y = canvas.height - PLAYER_HEIGHT - 10;
